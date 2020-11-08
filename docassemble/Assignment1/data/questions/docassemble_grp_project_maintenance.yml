@@ -1,0 +1,713 @@
+# MODIFY THIS BLOCK
+# Please fill in the relevant information.
+metadata:
+  title: |
+    Claiming Maintenance under the Maintenance of Parents Act
+  short title: |
+    Maintenance Claim
+  description: |
+    An online draft application to smoothen application process and to assess an applicant's eligibility to claim maintenance under the Maintenance of Parents Act
+  authors:
+    - name: Nikki Sun, Nicole Kan, Shaheed Soeheb
+      organization: COR-LAW-2215 Digital Intelligence for Lawyers
+  revision_date: 2020-11-
+---
+objects:
+  applicant: Individual
+  recipient: Individual
+  child: Individual
+---
+modules:
+- .validation
+- .contact_validation
+- .check_postal
+---
+#correct logic
+mandatory: True
+code: |
+ if welcome_msg:
+   app_by_self_or_other
+   if app_by_self_or_other == 'Myself':
+     singapore_resident
+     if singapore_resident:
+       applicant_birthdate
+     else:
+       ineligible_screen_citizen
+       
+     birthday = applicant_birthdate
+     current = current_datetime()
+     interval = date_difference(starting=birthday, ending=current)
+
+     if interval.years < 60:
+       infirmity_question
+       if infirmity_question:
+         applicant_name
+         if applicant_name:
+           applicant_gender
+           if applicant_address:
+             applicant_income
+              
+             if applicant_income >= applicant_expenditure:
+               ineligible_screen_self_income
+             if applicant_income < applicant_expenditure:
+               applicant_breakdown
+               if child.name.first:
+                 compilation_of_info
+                 if compilation_of_info:
+                   ending_screen
+            
+     if interval.years >= 60:
+      applicant_name
+      if applicant_name:
+        applicant_gender
+        if applicant_address:
+          applicant_income
+    
+          if applicant_income >= applicant_expenditure:
+            ineligible_screen_self_income
+          if applicant_income < applicant_expenditure:
+            applicant_breakdown
+            if child.name.first:
+              compilation_of_info
+              if compilation_of_info:
+                ending_screen
+            
+    #line 28
+     if special_reasons:
+       applicant_name
+       if applicant_name:
+         applicant_gender
+         if applicant_address:
+           applicant_income
+              
+           if applicant_income >= applicant_expenditure:
+             ineligible_screen_self_income
+           if applicant_income < applicant_expenditure:
+             applicant_breakdown
+             if child.name.first:
+               compilation_of_info
+               if compilation_of_info:
+                ending_screen
+     else:   
+       ineligible_screen_self_under60 
+            
+   else:
+     if app_by_self_or_other == 'Someone else':
+       person_or_org
+       if person_or_org == 'person':
+         approved_person
+         if approved_person:
+           recipient_birthdate
+         else:
+           ineligible_screen_person 
+       
+         birthday = recipient_birthdate
+         current = current_datetime()
+         interval = date_difference(starting=birthday, ending=current)
+
+         if interval.years < 60:
+           infirmity_question_behalf
+           if infirmity_question_behalf:
+             recipient_name
+             if recipient_name:
+               recipient_gender
+               if recipient_address:
+                 recipient_income
+
+                 if recipient_income >= recipient_expenditure:
+                   ineligible_screen_behalf_income
+                 if recipient_income < recipient_expenditure:
+                   recipient_breakdown
+                   if child.name.first:
+                     compilation_approved_person
+                     if compilation_approved_person:
+                       ending_screen
+                                
+         if interval.years >= 60:
+           recipient_name
+           if recipient_name:
+             recipient_gender
+             if recipient_address:
+               recipient_income
+
+               if recipient_income >= recipient_expenditure:
+                 ineligible_screen_behalf_income
+               if recipient_income < recipient_expenditure:
+                 recipient_breakdown
+                 if child.name.first:
+                   compilation_approved_person
+                   if compilation_approved_person:
+                     ending_screen
+
+         if special_reasons_behalf:
+           recipient_name
+           if recipient_name:
+             recipient_gender
+             if recipient_address:
+               recipient_income
+               
+               if recipient_income >= recipient_expenditure:
+                 ineligible_screen_behalf_income
+               if recipient_income < recipient_expenditure:
+                 recipient_breakdown
+                 if child.name.first:
+                   compilation_approved_person
+                   if compilation_approved_person:
+                     ending_screen
+          
+         else:
+           ineligible_screen_behalf_under60
+           
+       elif person_or_org == 'organisation':
+         approved_organisation
+         if approved_organisation:
+           recipient_birthdate
+         else:
+           ineligible_screen_organisation
+         
+         birthday = recipient_birthdate
+         current = current_datetime()
+         interval = date_difference(starting=birthday, ending=current)
+   
+         if interval.years < 60:
+           infirmity_question_behalf
+           if infirmity_question_behalf:
+             recipient_name
+             if recipient_name:
+               recipient_gender
+               if recipient_address:
+                 recipient_income
+                 
+                 if recipient_income >= recipient_expenditure:
+                   ineligible_screen_behalf_income
+                 if recipient_income < recipient_expenditure:
+                   recipient_breakdown
+                   if child.name.first:
+                     compilation_approved_org
+                     if compilation_approved_org:
+                       ending_screen
+    
+         if interval.years >= 60:
+           recipient_name
+           if recipient_name:
+             recipient_gender
+             if recipient_address:
+               recipient_income
+
+               if recipient_income >= recipient_expenditure:
+                 ineligible_screen_behalf_income
+               if recipient_income < recipient_expenditure:
+                 recipient_breakdown
+                 if child.name.first:
+                   compilation_approved_org
+                   if compilation_approved_org:
+                     ending_screen
+                     
+         if special_reasons_behalf:
+           recipient_name
+           if recipient_name:
+             recipient_gender
+             if recipient_address:
+               recipient_income
+               
+               if recipient_income >= recipient_expenditure:
+                 ineligible_screen_behalf_income
+               if recipient_income < recipient_expenditure:
+                 recipient_breakdown
+                 if child.name.first:
+                   compilation_approved_org
+                   if compilation_approved_org:
+                     ending_screen
+          
+         else:
+           ineligible_screen_behalf_under60                     
+---
+#QUESTIONS SECTION (IN SEQUENCE OF INTERVIEW FLOW)
+#Welcome Text
+question: |
+  Maintenance Claim under Maintenance of Parents Act
+subquestion: |
+  Welcome. This is a draft application for maintenance orders at the tribunal for the Maintenance of Parents Act. 
+  
+  We understand this process may be confusing. To simplify the process, the user link to the demonstration on how to use our interview can be found [*here*.](https://youtu.be/_ktrBmJ824A)
+
+  
+  To get started, press **Continue**.
+continue button field: welcome_msg
+---
+#WHO ARE YOU FILING FOR
+question: |
+  Who are you filing maintenance for?
+field: app_by_self_or_other
+choices:
+  - 'Myself'
+  - 'Someone else'
+---
+#FILING FOR YOURSELF
+question: |
+  Self-Application
+fields:
+  - 'Are you a Singapore citizen or Permanent Resident residing in Singapore?': singapore_resident
+    datatype: yesnoradio
+  - 'Applicant Birthdate': applicant_birthdate
+    show if: 
+      variable: singapore_resident 
+      is: True
+    datatype: date 
+---
+#SELF-APP PERSONAL INFORMATION
+question: |
+  Personal Information
+fields:
+  - Nationality: applicant_nationality
+    choices:
+    - Singapore Citizen
+    - Singapore Permanent Resident
+  - Title: applicant_title
+    choices:
+    - Mr
+    - Mrs
+    - Ms
+    - Dr
+  - Full Name per NRIC: applicant_name  
+  - 'NRIC': nric
+    validate: check_nric
+  - Birthdate: applicant.birthdate
+    datatype: date
+    default: ${ applicant_birthdate }
+
+---
+question: |
+  Personal Information
+fields:
+  - Gender: applicant_gender
+    choices:
+    - Male
+    - Female
+  - Race: applicant_race
+    choices:
+    - Chinese
+    - Malay
+    - Indian
+    - Eurasian
+    - Others
+  - Religion: applicant_religion
+    choices:
+    - Buddhist
+    - Christian
+    - Free Thinker
+    - Hindu
+    - Muslim
+    - Sikh
+    - Taoist
+    - Others
+  - 'Will you be able to communicate in English in Court?': applicant_language
+    datatype: yesnoradio
+  - Preferred Language: applicant_preferredlanguage
+    choices:
+    - Mandarin
+    - Malay
+    - Tamil
+    - Others
+    show if:
+      variable: applicant_language
+      is: False
+  - Special instructions: applicant_preferredlanguage
+    datatype: area
+    required: False
+
+---
+#SELF-APP address, email and contact
+question: |
+  Residential Address and Contact Details
+fields: 
+  - Postal Code: applicant_address
+    validate: check_postal
+  - Block/House No: applicant_block
+  - Street Name: applicant_street
+  - Floor/Unit: applicant_unit
+    required: false 
+  - Contact Number: applicant_number
+    validate: check_applicant_number
+  - E-mail Address: applicant_email
+    datatype: email
+    required: False
+
+---
+question: |
+  Maintenance Application Details
+#INCOME/EXPS/MAINTENANCE SUM
+fields:
+  - 'Current occupation': applicant_occupation
+    hint: e.g. Indicate NIL if unemployed
+  - 'Your total income in the past month': applicant_income
+    datatype: currency
+    min: 0
+    default: 0
+  - 'Your monthly expenditure for basic amenities and physical needs.': applicant_expenditure
+    help: |
+      These include (but are not limited to) shelter, food, medical cost and clothing.  
+    datatype: currency
+    min: 0
+    default: 0
+---
+question: |
+  Maintenance Requested
+fields:
+  - Brief explanation and breakdown of the expediture required: applicant_breakdown
+    datatype: area
+  - 'Maintenance Type Requested': applicant_maintenancetype
+    choices:
+    - Monthly Maintenance
+    - Lump Sum Maintenance
+  - 'Maintenance Sum Requested': applicant_maintenancesum
+    datatype: currency
+    min: 0
+    default: 0
+---
+#SELF-APP UNDER 60Y/O
+question: |
+  Applicant below 60 years old
+fields:
+  - 'As you are below 60 years old, are you suffering from an infirmity of mind or body which prevents you from maintaining yourself?': infirmity_question
+    datatype: yesnoradio
+  - 'Please upload any relevant documents necessary to prove an infirmity of mind or body.': infirmity_documents
+    datatype: file
+    required: False
+    show if: 
+      variable: infirmity_question 
+      is: True
+  - 'Do you have any other special reason for being unable to maintain yourself?': special_reasons
+    datatype: yesnoradio
+    show if: 
+      variable: infirmity_question 
+      is: False
+  - 'If so, please provide a short explanation.': special_reasons_explanation
+    datatype: area
+    required: False
+    show if: 
+      variable: special_reasons 
+      is: True
+  - 'Please also upload any relevant documents if possible.': special_reasons_documents
+    datatype: file
+    required: False
+    show if: 
+      variable: special_reasons 
+      is: True
+---
+#FILING FOR SOMEONE ELSE
+#make this btr
+question: |
+  Filing on behalf of someone
+subquestion: |
+  Are you a person or organisation filing for a maintenance claim on behalf of the recipient?
+field: person_or_org
+buttons:
+  - Person: person
+  - Organisation: organisation
+
+--- 
+#APPROVED PERSON
+question:  |
+  In order to apply on behalf of someone else, you must be an approved person
+subquestion: |
+  You are an approved person if you are the child of the recipient applying on behalf of your parent, or if you are the recipient's caretaker.  
+fields: 
+  - 'Are you an approved person?': approved_person
+    datatype: yesnoradio
+  - 'Please state your full name': person_name
+  - 'Please state your relationship with the recipient': person_rs
+    hint: e.g. Child of recipient
+    show if: 
+      variable: approved_person
+      is: True
+  - 'Recipient Birthdate': recipient_birthdate
+    show if: 
+      variable: approved_person 
+      is: True
+    datatype: date
+---
+#APPROVED ORGANISATION
+question:  In order to apply on behalf of someone else, you must be an approved organisation
+subquestion: |
+  You are an approved organisation if the recipient currently resides under your care. 
+fields: 
+  - 'Are you an approved organisation?': approved_organisation
+    datatype: yesnoradio
+  - 'Please state the name of your organisation': organisation_name
+    hint: e.g. ABC Nursing Home
+    show if: 
+      variable: approved_organisation
+      is: True
+  - 'Recipient Birthdate': recipient_birthdate
+    show if: 
+      variable: approved_organisation
+      is: True
+    datatype: date
+---
+#RECIPIENT'S INFO (FILING ON BEHALF)
+question: |
+  Please enter the recipient's personal information below.
+fields:
+  - Nationality: recipient_nationality
+    choices:
+    - Singapore Citizen
+    - Singapore Permanent Resident
+  - Title: recipient_title
+    choices:
+    - Mr
+    - Mrs
+    - Ms
+    - Dr
+  - Full Name per NRIC: recipient_name
+  - NRIC: nric
+    validate: check_nric
+  - Birthdate: recipient.birthdate
+    datatype: date
+    default: ${ recipient_birthdate }
+
+---
+question: |
+  Please enter the recipient's personal information below.
+fields:
+  - Gender: recipient_gender
+    choices:
+    - Male
+    - Female
+  - Race: recipient_race
+    choices:
+    - Chinese
+    - Malay
+    - Indian
+    - Eurasian
+    - Others
+  - Religion: recipient_religion
+    choices:
+    - Buddhist
+    - Christian
+    - Free Thinker
+    - Hindu
+    - Muslim
+    - Sikh
+    - Taoist
+    - Others
+  - 'Will the recipient be able to communicate in English in Court?': recipient_language
+    datatype: yesnoradio
+  - 'Preferred Language': recipient_preferredlanguage
+    choices:
+    - Mandarin
+    - Malay
+    - Tamil
+    - Others
+    show if:
+      variable: recipient_language
+      is: False
+  - Special Instructions: recipient_instructions
+    datatype: area
+    required: False
+
+---
+#RECIPIENT address, email and 
+question: |
+  Recipient's Current Residential Address and Contact Details
+fields: 
+  - Postal Code: recipient_address
+    validate: check_postal
+  - Block/House No: recipient_block
+  - Street Name: recipient_street
+  - Floor/Unit: recipient_unit
+    required: false
+  - Contact Number: recipient_number
+    validate: check_recipient_number
+  - E-mail Address: recipient_email
+    datatype: email
+    required: False
+
+
+---
+#RECIPIENT INCOME/EXPENSES/MAINTENANCE SUM
+question: |
+  Maintenance Application Details
+fields:
+  - 'Current occupation (indicate NIL if unemployed)': recipient_occupation
+  - "The recipient's total income in the past month": recipient_income
+    datatype: currency
+    min: 0
+    default: 0  
+
+  - 'Their monthly expenditure for basic amenities and physical needs.': recipient_expenditure
+    help: |
+      These include (but are not limited to) shelter, food, medical cost and clothing.
+    datatype: currency
+    min: 0
+    default: 0
+---
+question: |
+  Maintenance Requested
+fields:
+  - 'Brief explanation and breakdown of expediture required': recipient_breakdown
+    datatype: area
+  - 'Maintenance Type Requested': recipient_maintenancetype
+    choices:
+    - Monthly Maintenance
+    - Lump Sum Maintenance
+  - 'Maintenance Sum Requested': recipient_maintenancesum
+    datatype: currency
+    min: 0
+    default: 0
+---
+#RECIPIENT UNDER 60Y/O (APP ON BEHALF)
+question: |
+  Application for recipient below 60 years old
+fields:
+  - 'As the recipient is below 60 years old, are they suffering from an infirmity of mind or body which prevents them from maintaining themself?': infirmity_question_behalf
+    datatype: yesnoradio
+  - 'Please upload any relevant documents necessary to prove an infirmity of mind or body.': infirmity_documents_behalf
+    datatype: file
+    required: False
+    show if: 
+      variable: infirmity_question_behalf
+      is: True
+  - 'Do they have any other special reason for being unable to maintain themself?': special_reasons_behalf
+    datatype: yesnoradio
+    show if: 
+      variable: infirmity_question_behalf
+      is: False
+  - 'If so, please provide a short explanation.': special_reasons_behalf_explanation
+    datatype: area
+    required: False
+    show if: 
+      variable: special_reasons_behalf 
+      is: True
+  - 'Please also upload any relevant documents if possible.': special_reasons_documents_behalf
+    datatype: file
+    required: False
+    show if: 
+      variable: special_reasons_behalf 
+      is: True
+---
+#CHILD to claim from details
+question: |
+  Details of Child which maintenance is sought from
+fields:
+  - 'Relationship': child_relationship
+    choices:
+    - Son
+    - Daughter
+    - Step-Son
+    - Step-Daughter
+  - Full Name per NRIC: child.name.first  
+  - Nationality: child_nationality
+    choices:
+    - Singapore Citizen
+    - Singapore Permanent Resident
+  - 'NRIC': child.nric
+    validate: check_nric
+  - Birthdate: child.birthdate
+    datatype: date
+  - 'Do you know the address of your child?': child_address
+    datatype: yesnoradio
+  - Postal Code: child.postal
+    datatype: integer
+    show if:
+      variable: child_address
+      is: True
+  - Block/House No: child.block
+    show if:
+      variable: child_address
+      is: True
+  - Street Name: child.street
+    show if:
+      variable: child_address
+      is: True
+  - Floor/Unit: child.unit
+    required: false
+    show if:
+      variable: child_address
+      is: True
+    
+  - Verifying documents: verify_child
+    datatype: file
+    required: False
+    help: |
+      e.g. Birth Certificates 
+---
+# Compilation of data Self-app
+question: |
+  Here is a compilation of the information you have provided. Please submit this form to the tribunal.
+attachment:
+  name: Compiled information
+  filename: Compiled Info
+  docx template file: Self_Application.docx
+  valid formats:
+    - pdf
+    - docx
+field: compilation_of_info
+---
+# Compilation of data Approved persons
+question: |
+  Here is a compilation of the information you have provided. Please submit this form to the tribunal.
+attachment:
+  name: Compiled information
+  filename: Compiled Info
+  docx template file: Approved_Persons.docx
+  valid formats:
+    - pdf
+    - docx
+field: compilation_approved_person
+---
+# Compilation of data Approved org
+question: |
+  Here is a compilation of the information you have provided. Please submit this form to the tribunal.
+attachment:
+  name: Compiled information
+  filename: Compiled Info
+  docx template file: Approved_Organisations.docx
+  valid formats:
+    - pdf
+    - docx
+field: compilation_approved_org
+---
+# Exit 1
+question: |
+  Unfortunately, you are not eligible for a maintenance claim as you are not a Singapore Citizen or a Permanent Resident.
+event: ineligible_screen_citizen
+---
+# Exit 2
+question: |
+  Unfortunately, you are not eligible for a maintenance claim as you are currently able to maintain yourself with your income.
+event: ineligible_screen_self_income
+---
+# Exit 3
+question: |
+  Unfortunately, you are not eligible for a maintenance claim as you are below 60 years and do not fulfill the special exceptions.
+event: ineligible_screen_self_under60
+---
+# Exit 4
+question: |
+  Unfortunately, you are not eligible to file a maintenance claim on behalf of the recipient as you are not an approved person.
+event: ineligible_screen_person
+---
+# Exit 5
+question: |
+  Unfortunately, you are not eligible to file a maintenance claim on behalf of the recipient as you are not an approved organisation.
+event: ineligible_screen_organisation
+---
+# Exit 6
+question: |
+  Unfortunately, the recipient is not eligible for a maintenance claim as they are below 60 years and do not fulfill the special exceptions.
+event: ineligible_screen_behalf_under60
+---
+# Exit 7
+question: |
+  Unfortunately, the recipient is not eligible for a maintenance claim as they are currently able to maintain themselves with their income.
+event: ineligible_screen_behalf_income
+---
+# Ending screen
+question: |
+  You have reached the end of the interview. More details to contact the Tribunal can be found [*here*.](https://www.msf.gov.sg/maintenanceofparents/Pages/Home.aspx)
+buttons:
+  - Exit: exit
+  - Restart: restart
+event: ending_screen
+---

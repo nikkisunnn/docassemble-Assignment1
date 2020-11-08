@@ -1,0 +1,1 @@
+ The template makes use of Jinja formatting.
